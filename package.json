@@ -1,0 +1,9 @@
+{
+  "name": "5_shopify_react_redux",
+  "version": "1.0.0",
+  "description": "Project of the day #5: Shopify embedded app with a Next.js server + Redux store",
+  "main": "index.js",
+  "repository": "git@github.com:varevarao/5_shopify_react_redux.git",
+  "author": "Varshneya Rao <varevarao@gmail.com>",
+  "license": "MIT"
+}
