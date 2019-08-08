@@ -5,5 +5,52 @@
   "main": "index.js",
   "repository": "git@github.com:varevarao/5_shopify_react_redux.git",
   "author": "Varshneya Rao <varevarao@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "keywords": [],
+  "scripts": {
+    "dev": "NODE_ENV=development node server.js",
+    "now-build": "next build",
+    "build": "NODE_ENV=production next build",
+    "gcp-build": "NODE_ENV=production next build",
+    "start": "NODE_ENV=production node server.js",
+    "stage": "npm run gcp-build && npm start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.2.1",
+    "@shopify/app-bridge-react": "^1.6.6",
+    "@shopify/koa-shopify-auth": "^3.1.30",
+    "@shopify/polaris": "^3.20.0",
+    "@zeit/next-css": "^1.0.1",
+    "@zeit/next-sass": "^1.0.1",
+    "currency-symbol-map": "^4.0.4",
+    "deep-object-diff": "^1.1.0",
+    "dotenv-flow": "^3.0.0",
+    "isomorphic-unfetch": "^3.0.0",
+    "js-cookie": "^2.2.0",
+    "koa": "^2.7.0",
+    "koa-session": "^5.12.2",
+    "lodash.merge": "^4.6.2",
+    "next": "^9.0.2",
+    "next-cookies": "^1.1.2",
+    "next-redux-wrapper": "^3.0.0-alpha.3",
+    "node-sass": "^4.12.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.1.0",
+    "react-uid": "^2.2.0",
+    "redux": "^4.0.4",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-thunk": "^2.3.0",
+    "reselect": "^4.0.0",
+    "styled-components": "^4.3.2",
+    "styled-components-breakpoint": "^2.1.1"
+  },
+  "devDependencies": {
+    "@now/node": "^0.11.1",
+    "babel-plugin-styled-components": "^1.10.6",
+    "koa-router": "^7.4.0",
+    "micro-cors": "^0.1.1"
+  }
 }
