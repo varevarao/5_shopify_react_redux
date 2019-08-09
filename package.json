@@ -14,7 +14,7 @@
     "gcp-build": "NODE_ENV=production next build",
     "start": "NODE_ENV=production node server.js",
     "stage": "npm run build && npm start",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_ENV=production next build"
   },
   "dependencies": {
     "@material-ui/core": "^4.2.1",
