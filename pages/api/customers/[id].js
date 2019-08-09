@@ -1,4 +1,4 @@
-import { fetchShopifyAPI } from '../../../shopify-data';
+import { fetchShopifyAPI } from '../../../helpers/shopify-fetch';
 
 export default async (req, res) => {
     const {
@@ -6,6 +6,7 @@ export default async (req, res) => {
         body
     } = req;
 
+    // Handle customer updates
     if (req.method === 'PUT') {
         const { shopOrigin, accessToken } = req.cookies;
         // console.log(`Updating data for ${id} with token ${accessToken} and updates: ${body}`)
