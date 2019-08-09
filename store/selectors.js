@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
-const getCustomers = (state) => Object.values(state.customers);
-const getOrders = (state) => Object.values(state.orders);
+const getCustomers = (state) => state.customers;
+const getOrders = (state) => state.orders;
 
 // Computed Stats
 export const total_customers = createSelector([getCustomers], (customers) => {
