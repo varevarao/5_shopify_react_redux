@@ -13,8 +13,7 @@ const session = require('koa-session');
 const { default: createShopifyAuth } = require('@shopify/koa-shopify-auth');
 const { verifyRequest } = require('@shopify/koa-shopify-auth');
 
-// Load the env config
-dotenv.config();
+const APP_CONFIG = require('./config/index');
 
 // Setup the app, using Next.js
 const port = parseInt(process.env.PORT, 10) || 3000;
@@ -40,7 +39,7 @@ app.prepare().then(() => {
         createShopifyAuth({
             apiKey: SHOPIFY_API_KEY,
             secret: SHOPIFY_API_SECRET_KEY,
-            scopes: ['read_products', 'read_customers', 'write_customers', 'read_orders'],
+            scopes: Object.values(APP_CONFIG.enabled_apis).reduce((scopes, curr) => scopes.concat(curr.scopes), []),
             afterAuth(ctx) {
                 // Pick up the private details
                 const { shop, accessToken } = ctx.session;

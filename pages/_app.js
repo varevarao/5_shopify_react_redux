@@ -1,16 +1,19 @@
-import { Loading, Toast, Provider as ShopifyProvider } from '@shopify/app-bridge-react';
+import { Loading, Provider as ShopifyProvider, Toast } from '@shopify/app-bridge-react';
+import { AppProvider } from '@shopify/polaris';
 import '@shopify/polaris/styles.css';
 import 'isomorphic-unfetch';
 import Cookies from 'js-cookie';
-import cookies from 'next-cookies';
 import withRedux from 'next-redux-wrapper';
 import App from 'next/app';
 import Head from 'next/head';
 import Router from 'next/router';
 import { connect, Provider as DataProvider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
-import { finishInit, hideLoader, initializeProductImages, initializeShopifyData, initializeStore, showLoader, startInit, hideToaster } from '../store';
+import initializeStore from '../store';
+import setupServerStores from '../store/actions';
+import { hideLoader, hideToaster, showLoader } from '../store/actions/ui';
 
+// Material UI breakpoints
 const theme = {
     breakpoints: {
         xs: 0,
@@ -22,10 +25,13 @@ const theme = {
     }
 };
 
-const _PageWithLoader = ({NextPage, loading, toaster, hideToaster,  ...props}) => (
+/**
+ * HOC for wrapping the app with a toaster, and loader bar
+ */
+const _PageWithLoader = ({ NextPage, loading, toaster, hideToaster, ...props }) => (
     <div>
-        { loading && <Loading /> }
-        { toaster && <Toast error={toaster.error} content={toaster.message} onDismiss={hideToaster} /> }
+        {loading && <Loading />}
+        {toaster && <Toast error={toaster.error} content={toaster.message} onDismiss={hideToaster} />}
         <NextPage {...props} />
     </div>
 );
@@ -45,28 +51,40 @@ const mapDispatchToProps = dispatch => {
 
 const PageWithLoader = connect(mapStateToProps, mapDispatchToProps)(_PageWithLoader);
 
+
+/**
+ * Main app container
+ */
 class MainApp extends App {
+    /**
+     * On the client, this can be used directly from the app state
+     * TODO: This can be moved into the store
+     */
     state = {
         shopOrigin: Cookies.get('shopOrigin'),
-        apiKey: process.env.SHOPIFY_API_KEY
+        apiKey: SHOPIFY_API_KEY
     }
 
     constructor(props) {
         super(props);
 
-        this.toggleLoader = this._toggleLoader.bind(this); 
+        // Handle any page transitions with a loader
+        this.toggleLoader = this.toggleLoader.bind(this);
     }
 
+    /**
+     * Called before creating the component,
+     * Check for ctx.isServer, and execute any SSR requirements in this
+     * 
+     * In this case, we setup the initial redux store state.
+     */
     static async getInitialProps({ Component, ctx }) {
         if (ctx.isServer) {
-            ctx.store.dispatch(startInit());
-
-            const { shopOrigin, accessToken } = cookies(ctx);
-            
-            await ctx.store.dispatch(initializeShopifyData(shopOrigin, accessToken));
-            await ctx.store.dispatch(initializeProductImages(shopOrigin, accessToken));
-            
-            ctx.store.dispatch(finishInit());
+            // Setup the initial Redux stores on the server
+            await setupServerStores(ctx);
+        } else if (ctx.store && ctx.store.dispatch) {
+            // If we're on the client, show the loader
+            this.toggleLoader(ctx.store, true);
         }
 
         const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
@@ -74,16 +92,19 @@ class MainApp extends App {
     }
 
     componentDidMount() {
+        // Start monitoring 
         Router.events.on('routeChangeStart', () => this.toggleLoader(true));
         Router.events.on('hashChangeStart', () => this.toggleLoader(true));
         Router.events.on('routeChangeComplete', () => this.toggleLoader(false));
         Router.events.on('hashChangeComplete', () => this.toggleLoader(false));
 
-        this.toggleLoader(false);
+        // Hide the loader when the main app loads
+        // (the default state value stores this as visible)
+        this.toggleLoader(this.props.store, false);
     }
 
-    _toggleLoader(visible) {
-        this.props.store.dispatch(visible ? showLoader() : hideLoader());
+    toggleLoader({ dispatch }, visible) {
+        dispatch(visible ? showLoader() : hideLoader());
     }
 
     render() {
@@ -104,7 +125,9 @@ class MainApp extends App {
                 <ThemeProvider theme={theme}>
                     <ShopifyProvider config={providerConfig}>
                         <DataProvider store={store}>
-                            <PageWithLoader NextPage={Component} {...pageProps} />
+                            <AppProvider>
+                                <PageWithLoader NextPage={Component} {...pageProps} />
+                            </AppProvider>
                         </DataProvider>
                     </ShopifyProvider>
                 </ThemeProvider>

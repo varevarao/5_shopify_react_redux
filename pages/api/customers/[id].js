@@ -9,7 +9,7 @@ export default async (req, res) => {
     if (req.method === 'PUT') {
         const { shopOrigin, accessToken } = req.cookies;
         // console.log(`Updating data for ${id} with token ${accessToken} and updates: ${body}`)
-        const response = (!!id && !!accessToken) ? await fetchShopifyAPI(`customers/${id}`, shopOrigin, accessToken, {}, 'PUT', body) : null;
+        const response = (!!id && !!accessToken) ? await fetchShopifyAPI(`customers/${id}`, { shopOrigin, accessToken, method: 'PUT', body }) : null;
 
         // console.log(response);
         res.setHeader('Content-Type', 'application/json')
