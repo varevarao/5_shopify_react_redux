@@ -1,3 +1,24 @@
+# Shopify Embedded App
+[![Build Status](https://travis-ci.com/varevarao/5_shopify_react_redux.svg?branch=master)](https://travis-ci.com/varevarao/5_shopify_react_redux)  [![GitHub version](https://img.shields.io/github/package-json/v/varevarao/5_shopify_react_redux)](https://github.com/varevarao/5_shopify_react_redux)
+
+This is boilerplate code for a Shopify Embedded Admin app running on the Next.js framework. It is easily configurable, and the UI can directly be plugged in for a functional setup.
+
+## Technology
+The project uses the following technology stack:
+- **[Koa](https://github.com/koajs/koa) server**:  
+    *Koa* is a modern server architecture based on the *Express.js* server.  
+    It is used to set up a custom server, where we inject *Shopify* auth
+- **[@shopify/koa-shopify-auth](https://github.com/Shopify/quilt/blob/master/packages/koa-shopify-auth/README.md)**:  
+     *koa-shopify-auth* is an auth middleware, which uses the configured keys, to determine the shop and obtians an access token
+- **[Shopify Admin API](https://help.shopify.com/en/api/reference)**:  
+    The Admin API interface offered by *Shopify*, which is a JSON based communication interface
+- **[Next.js](https://github.com/zeit/next.js/) framework**:   
+     *Next.js* is a highly customizable react framework which includes support for isomorphic apps, and can be customized as either completely client, or server side.
+- **[React.js](https://github.com/facebook/react) language features**:  
+    *React.js* is a JS library that makes building for the web front end fun, and intuitive.
+- **[Travis CI]()**:  
+    *Travis-ci* is used to keep the project stable, and report any issues in a timely fashion. More information on the build lifecycle can be found [in their docs](https://docs.travis-ci.com/user/job-lifecycle/)
+
 ## Setup
 This app runs on a Node backend, with Next.js serving pages, and routes, and Koa handling the architecture. In order to setup the app:
 
@@ -45,17 +66,3 @@ $> heroku git:remote -a <app_name>
 $> git push heroku master
 ```
 Once the push completes, you will receive the URL at which the app is available. Repeat the '*connect your store*' steps using the above url as the app endpoint.
-
-## Technology
-The project uses the following technology stack:
-- **[Koa](https://github.com/koajs/koa) server**:  
-    *Koa* is a modern server architecture based on the *Express.js* server.  
-    It is used to set up a custom server, where we inject *Shopify* auth
-- **[@shopify/koa-shopify-auth](https://github.com/Shopify/quilt/blob/master/packages/koa-shopify-auth/README.md)**:  
-     *koa-shopify-auth* is an auth middleware, which uses the configured keys, to determine the shop and obtians an access token
-- **[Shopify Admin API](https://help.shopify.com/en/api/reference)**:  
-    The Admin API interface offered by *Shopify*, which is a JSON based communication interface
-- **[Next.js](https://github.com/zeit/next.js/) framework**:   
-     *Next.js* is a highly customizable react framework which includes support for isomorphic apps, and can be customized as either completely client, or server side.
-- **[React.js](https://github.com/facebook/react) language features**:  
-    *React.js* is a JS library that makes building for the web front end fun, and intuitive.
