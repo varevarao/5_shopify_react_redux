@@ -5,6 +5,7 @@ import 'isomorphic-unfetch';
 import Cookies from 'js-cookie';
 import withRedux from 'next-redux-wrapper';
 import App from 'next/app';
+import getConfig from 'next/config';
 import Head from 'next/head';
 import Router from 'next/router';
 import { connect, Provider as DataProvider } from 'react-redux';
@@ -12,6 +13,9 @@ import { ThemeProvider } from 'styled-components';
 import initializeStore from '../store';
 import setupServerStores from '../store/actions';
 import { hideLoader, hideToaster, showLoader } from '../store/actions/ui';
+
+// API key is required by the app bridge
+const { publicRuntimeConfig: { ENV_DEV, API_KEY } } = getConfig();
 
 // Material UI breakpoints
 const theme = {
@@ -61,8 +65,7 @@ class MainApp extends App {
      * TODO: This can be moved into the store
      */
     state = {
-        shopOrigin: Cookies.get('shopOrigin'),
-        apiKey: SHOPIFY_API_KEY
+        shopOrigin: Cookies.get('shopOrigin')
     }
 
     constructor(props) {
@@ -110,7 +113,7 @@ class MainApp extends App {
     render() {
         const { Component, pageProps, store } = this.props;
         const providerConfig = {
-            apiKey: this.state.apiKey,
+            apiKey: API_KEY,
             shopOrigin: this.state.shopOrigin,
             // Force a redirect to the admin app if not loaded in an iframe
             forceRedirect: true
@@ -136,4 +139,4 @@ class MainApp extends App {
     }
 }
 
-export default withRedux(initializeStore, { debug: !!process.env.DEBUG_REDUX })(MainApp);
+export default withRedux(initializeStore, { debug: ENV_DEV === 'true' })(MainApp);

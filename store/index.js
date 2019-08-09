@@ -2,6 +2,9 @@ import { updatedDiff } from 'deep-object-diff';
 import { applyMiddleware, compose, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import makeRootReducer from './reducers/index';
+import getConfig from 'next/config';
+
+const { publicRuntimeConfig: { ENV_DEV } } = getConfig();
 
 export default (initialState = {}) => {
     // ======================================================

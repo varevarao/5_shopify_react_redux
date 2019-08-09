@@ -1,4 +1,7 @@
+import getConfig from 'next/config';
 import { errors as actionTypes } from './actionTypes';
+
+const { publicRuntimeConfig: { ENV_DEV } } = getConfig();
 
 export const ERROR_TYPES = {
     http: 'http'

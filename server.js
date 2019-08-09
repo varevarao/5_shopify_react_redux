@@ -4,14 +4,16 @@ require('isomorphic-unfetch');
 const Koa = require('koa');
 // React based UI builder
 const next = require('next');
-// Load process.env from .env file
-const dotenv = require('dotenv-flow');
 // Support for sessions
 const session = require('koa-session');
-
+// Next config
+const getConfig = require('next/config').default;
 // Shopify specifics
 const { default: createShopifyAuth } = require('@shopify/koa-shopify-auth');
 const { verifyRequest } = require('@shopify/koa-shopify-auth');
+
+// Pick up the Shopify keys
+// const { SHOPIFY_API_KEY, SHOPIFY_API_SECRET_KEY } = process.env;
 
 const APP_CONFIG = require('./config/index');
 
@@ -21,24 +23,22 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-// Pick up the Shopify keys
-const { SHOPIFY_API_KEY, SHOPIFY_API_SECRET_KEY } = process.env;
-
 // Setup the app
 app.prepare().then(() => {
+    const { serverRuntimeConfig: { API_SECRET_KEY }, publicRuntimeConfig: { API_KEY } } = getConfig();
     // Use the Koa architecture for our app
     const server = new Koa();
     // Use sessions on this server
     server.use(session(server));
     // Setup the secret to be used by the server
     // Multiple keys can be added for key rotation
-    server.keys = [SHOPIFY_API_KEY];
+    server.keys = [API_KEY];
 
     // Setup Shopify auth
     server.use(
         createShopifyAuth({
-            apiKey: SHOPIFY_API_KEY,
-            secret: SHOPIFY_API_SECRET_KEY,
+            apiKey: API_KEY,
+            secret: API_SECRET_KEY,
             scopes: Object.values(APP_CONFIG.enabled_apis).reduce((scopes, curr) => scopes.concat(curr.scopes), []),
             afterAuth(ctx) {
                 // Pick up the private details

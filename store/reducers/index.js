@@ -1,11 +1,14 @@
+import getConfig from 'next/config';
 import { reducer as toastrReducer } from 'react-redux-toastr';
 import { combineReducers } from 'redux';
-import shopReducer from './shop';
 import customersReducer from './customers';
 import errorReducer from './errors';
 import ordersReducer from './orders';
 import productsReducers from './products';
+import shopReducer from './shop';
 import uiReducer from './ui';
+
+const { publicRuntimeConfig: { ENV_DEV } } = getConfig();
 
 export const makeRootReducer = asyncReducers => {
 	const defaults = {
