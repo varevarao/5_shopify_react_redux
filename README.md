@@ -31,6 +31,20 @@ Supported config options:
 - `enabled_apis`:  
     - Map of enabled API endpoints, keyed by the API name, any key in here should have a corresponding entry in 'store/actions/index.js', and an action named 'setupInitialState' which populates the server side redux store
 
+## Deployment
+The app can be easily, and quickly deployed on [Heroku](https://www.heroku.com) using the [`heroku-cli`](https://devcenter.heroku.com/articles/heroku-cli) tools. Create a free account on Heroku before proceeding.
+Run the following in the project root:
+```
+# In case you don't have an app assoicated with this repo
+$> heroku create 
+
+# If you already have an app on heroku, link the heroku remote to git
+$> heroku git:remote -a <app_name>
+
+# Push code directly to the heroku remote, where it will run npm build
+$> git push heroku master
+```
+Once the push completes, you will receive the URL at which the app is available. Repeat the '*connect your store*' steps using the above url as the app endpoint.
 
 ## Technology
 The project uses the following technology stack:
