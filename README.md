@@ -1,15 +1,47 @@
-### Setup
+## Setup
 This app runs on a Node backend, with Next.js serving pages, and routes, and Koa handling the architecture. In order to setup the app:
-1. Clone the repo
-2. Run `npm i` to update all the dependencies
-3. Run `npm run dev` to start the local server at port 3000
-4. Navigate to `http://localhost:3000` to see the running app
-5. Connect your Shopify store to the app:
-    - Run `ngrok http 3000` to get an https tunnel setup
-    - Create a development store on the Shopify partner portal
-    - Create an app on the Shopify partner portal
-    - Create a `.env` file and add the keys `SHOPIFY_API_KEY`, and `SHOPIFY_API_SECRET_KEY` with the corersponding values from the portal
-    - To add the development app to the store visit `https://<your ngrok url>.io/auth?shop=<your Shopify store name>.myshopify.com`
-    - In case of an error `The page you’re looking for couldn’t be found`, re-attempt access to the above URL
-    - Authorize the app on your store
-6. DONE!! You can now visit your store URL, and in the apps section you should see the development app
+
+### Codebase
+- Clone the repo
+- Run `yarn install` to update all the dependencies
+- To start the server at port 3000
+    - `yarn dev` in development mode (includes error backtracking using Redux)
+    - `yarn start` in production mode
+- Navigate to `http://localhost:3000` to see the running app *(if you see an auth error that's fine for now)*
+
+### Connect your Shopify store to the app
+- Run `ngrok http 3000` to get an https tunnel setup
+- Create a development store on the Shopify partner portal (transferrable)
+- Create **two apps** on the Shopify [partner portal](https://partners.shopify.com): One for development, and the other production
+- Create **two copies** of the `.env.template` file, and rename them as `.env.development`, and `.env.production`
+- Add the keys `SHOPIFY_API_KEY`, and `SHOPIFY_API_SECRET_KEY` with the corersponding values from the portal (one app for each environment), into the corresponding `.env` file
+- To add the development app to the store visit  
+`https://<your ngrok url>.io/auth?shop=<your Shopify store name>.myshopify.com`
+- In case of an error `The page you’re looking for couldn’t be found`, re-attempt access to the above URL
+- Authorize the app on your store
+
+DONE!! You can now visit your store URL, and in the apps section you should see the development (and production) app
+
+## Customization
+The app is built as a boilerplate for embedded shopify apps, and as such has the scaffolding to get and store all available shop, customer, and order data. In order to customize this behaviour, change the settings under `config/index.js`
+
+Supported config options:
+- `SHOPIFY_API_VERSION`:  
+    - Admin API version to use for server requests
+- `enabled_apis`:  
+    - Map of enabled API endpoints, keyed by the API name, any key in here should have a corresponding entry in 'store/actions/index.js', and an action named 'setupInitialState' which populates the server side redux store
+
+
+## Technology
+The project uses the following technology stack:
+- **[Koa](https://github.com/koajs/koa) server**:  
+    *Koa* is a modern server architecture based on the *Express.js* server.  
+    It is used to set up a custom server, where we inject *Shopify* auth
+- **[@shopify/koa-shopify-auth](https://github.com/Shopify/quilt/blob/master/packages/koa-shopify-auth/README.md)**:  
+     *koa-shopify-auth* is an auth middleware, which uses the configured keys, to determine the shop and obtians an access token
+- **[Shopify Admin API](https://help.shopify.com/en/api/reference)**:  
+    The Admin API interface offered by *Shopify*, which is a JSON based communication interface
+- **[Next.js](https://github.com/zeit/next.js/) framework**:   
+     *Next.js* is a highly customizable react framework which includes support for isomorphic apps, and can be customized as either completely client, or server side.
+- **[React.js](https://github.com/facebook/react) language features**:  
+    *React.js* is a JS library that makes building for the web front end fun, and intuitive.
