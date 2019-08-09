@@ -84,7 +84,7 @@ class MainApp extends App {
             await setupServerStores(ctx);
         } else if (ctx.store && ctx.store.dispatch) {
             // If we're on the client, show the loader
-            this.toggleLoader(ctx.store, true);
+            ctx.store.dispatch(showLoader());
         }
 
         const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
