@@ -1,5 +1,5 @@
 # Shopify Embedded App
-[![Build Status](https://travis-ci.com/varevarao/5_shopify_react_redux.svg?branch=master)](https://travis-ci.com/varevarao/5_shopify_react_redux)  [![GitHub version](https://img.shields.io/github/package-json/v/varevarao/5_shopify_react_redux)](https://github.com/varevarao/5_shopify_react_redux)
+[![Build Status](https://travis-ci.com/varevarao/potd_5_next_redux_shopify.svg?branch=master)](https://travis-ci.com/varevarao/potd_5_next_redux_shopify)  [![GitHub version](https://img.shields.io/github/package-json/v/varevarao/potd_5_next_redux_shopify)](https://github.com/varevarao/potd_5_next_redux_shopify)
 
 This is boilerplate code for a Shopify Embedded Admin app running on the Next.js framework. It is easily configurable, and the UI can directly be plugged in for a functional setup.
 
