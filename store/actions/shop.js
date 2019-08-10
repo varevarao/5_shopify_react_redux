@@ -1,4 +1,4 @@
-import { API_TYPES, fetchShopifyAPI } from '../../helpers/shopify-fetch';
+import { API_TYPES, fetchInternalAPI } from '../../helpers/internal-fetch';
 import { shop as actionTypes } from './actionTypes';
 import { ERROR_TYPES, logError } from './errors';
 
@@ -7,9 +7,9 @@ export const metaFetched = meta => ({
     payload: { ...meta }
 });
 
-export const fetchAppMeta = ctx => (
+export const fetchAppMeta = () => (
     async dispatch => {
-        const { shopConfig, err } = await fetchShopifyAPI(API_TYPES.shop(), { ctx });
+        const { shopConfig, err } = await fetchInternalAPI(API_TYPES.shop(), {});
         if (shopConfig) {
             dispatch(metaFetched(JSON.parse(shopConfig)));
         } else if (err) {

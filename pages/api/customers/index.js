@@ -1,15 +1,12 @@
 import { fetchShopifyAPI } from '../../../helpers/shopify-fetch';
 
 const handlers = {
-    PUT: (req, res) => {
-        const {
-            query: { id },
-            body
-        } = req;
-
+    GET: async (req, res) => {
         const { shopOrigin, accessToken } = req.cookies;
         // console.log(`Updating data for ${id} with token ${accessToken} and updates: ${body}`)
-        const { response, err } = (!!id && !!accessToken) ? await fetchShopifyAPI(`customers/${id}`, { shopOrigin, accessToken, method: 'PUT', body }) : null;
+        const { data: response, err } = (!!accessToken) ?
+            await fetchShopifyAPI(`customers`, { shopOrigin, accessToken, method: 'GET' }) :
+            { data: null, err: 'Invalid cookies' };
 
         // console.log(response);
         res.setHeader('Content-Type', 'application/json')
@@ -25,7 +22,7 @@ const handlers = {
     }
 }
 
-export default async (req, res) => {
+export default (req, res) => {
     // Handle customer updates
     if (req.method in handlers) {
         handlers[req.method](req, res);

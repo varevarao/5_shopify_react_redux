@@ -1,4 +1,4 @@
-import { API_TYPES, fetchShopifyAPI } from '../../helpers/shopify-fetch';
+import { API_TYPES, fetchInternalAPI } from '../../helpers/internal-fetch';
 import { customers as actionTypes } from './actionTypes';
 import { logError, ERROR_TYPES } from './errors';
 
@@ -23,9 +23,9 @@ export const saveEdits = () => ({
 })
 
 /************ Thunk actions **************/
-export const setupInitialState = ctx => dispatch => {
+export const setupInitialState = () => dispatch => {
     // Fetch the customer list
-    return fetchShopifyAPI(API_TYPES.customers(), { ctx })
+    return fetchInternalAPI(API_TYPES.customers(), {})
         .then(({ data, err }) => {
             if (!!data) {
                 const { customers } = JSON.parse(data);

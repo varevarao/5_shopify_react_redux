@@ -2,16 +2,16 @@ import { Loading, Provider as ShopifyProvider, Toast } from '@shopify/app-bridge
 import { AppProvider } from '@shopify/polaris';
 import '@shopify/polaris/styles.css';
 import 'isomorphic-unfetch';
-import Cookies from 'js-cookie';
 import withRedux from 'next-redux-wrapper';
 import App from 'next/app';
 import getConfig from 'next/config';
 import Head from 'next/head';
 import Router from 'next/router';
+import { parseCookies } from 'nookies';
 import { connect, Provider as DataProvider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import initializeStore from '../store';
-import setupServerStores from '../store/actions';
+import setupClientStores from '../store/actions';
 import { hideLoader, hideToaster, showLoader } from '../store/actions/ui';
 
 // API key is required by the app bridge
@@ -32,13 +32,20 @@ const theme = {
 /**
  * HOC for wrapping the app with a toaster, and loader bar
  */
-const _PageWithLoader = ({ NextPage, loading, toaster, hideToaster, ...props }) => (
-    <div>
-        {loading && <Loading />}
-        {toaster && <Toast error={toaster.error} content={toaster.message} onDismiss={hideToaster} />}
-        <NextPage {...props} />
-    </div>
-);
+const _PageWithLoader = ({ NextPage, loading, toaster, hideToaster, dispatch, ...props }) => {
+    if (process.browser) {
+        // Setup the initial Redux stores on the client
+        setupClientStores({ dispatch });
+    }
+    
+    return (
+        <div>
+            {loading && <Loading />}
+            {toaster && <Toast error={toaster.error} content={toaster.message} onDismiss={hideToaster} />}
+            <NextPage {...props} />
+        </div>
+    );
+};
 
 const mapStateToProps = state => {
     return {
@@ -49,7 +56,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        hideToaster: () => dispatch(hideToaster())
+        hideToaster: () => dispatch(hideToaster()),
+        dispatch
     }
 }
 
@@ -65,7 +73,7 @@ class MainApp extends App {
      * TODO: This can be moved into the store
      */
     state = {
-        shopOrigin: Cookies.get('shopOrigin')
+        shopOrigin: parseCookies()['shopOrigin']
     }
 
     constructor(props) {
@@ -76,34 +84,16 @@ class MainApp extends App {
     }
 
     /**
-     * Called before creating the component,
-     * Check for ctx.isServer, and execute any SSR requirements in this
+     * Called when the main app container mounts on the client,
      * 
      * In this case, we setup the initial redux store state.
      */
-    static async getInitialProps({ Component, ctx }) {
-        if (ctx.isServer) {
-            // Setup the initial Redux stores on the server
-            await setupServerStores(ctx);
-        } else if (ctx.store && ctx.store.dispatch) {
-            // If we're on the client, show the loader
-            ctx.store.dispatch(showLoader());
-        }
-
-        const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
-        return { pageProps };
-    }
-
     componentDidMount() {
         // Start monitoring 
         Router.events.on('routeChangeStart', () => this.toggleLoader(true));
         Router.events.on('hashChangeStart', () => this.toggleLoader(true));
         Router.events.on('routeChangeComplete', () => this.toggleLoader(false));
         Router.events.on('hashChangeComplete', () => this.toggleLoader(false));
-
-        // Hide the loader when the main app loads
-        // (the default state value stores this as visible)
-        this.toggleLoader(this.props.store, false);
     }
 
     toggleLoader({ dispatch }, visible) {

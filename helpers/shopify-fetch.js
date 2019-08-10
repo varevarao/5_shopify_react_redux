@@ -1,8 +1,7 @@
 require('isomorphic-unfetch');
-const cookies = require('next-cookies');
+const parseCookies = require('nookies');
 const SHOPIFY_API_VERSION = require('../config/index').SHOPIFY_API_VERSION;
-
-const formatQueryString = (params) => Object.entries(params).reduce((str, [key, value], i) => `${i > 0 ? '&' : '?'}${str}${key}=${value}`, '');
+const stringUtils = require('../helpers/string-utils');
 
 module.exports = {
     API_TYPES: {
@@ -15,14 +14,14 @@ module.exports = {
     fetchShopifyAPI: async (apiName, { shopOrigin, accessToken, ctx = null, params = {}, method = 'GET', body = null }) => {
         // If provided the Next.js context, use that to pick up cookies
         if (!!ctx) {
-            const cooks = cookies(ctx);
+            const cooks = parseCookies(ctx);
             shopOrigin = cooks.shopOrigin;
             accessToken = cooks.accessToken;
         }
 
         try {
             // Prepare the query string params
-            const queryString = formatQueryString(params);
+            const queryString = stringUtils.formatQueryString(params);
             // Setup common headers, and body
             const options = Object.assign({
                 method,
@@ -33,6 +32,45 @@ module.exports = {
             }, (body ? { body: typeof body === 'string' ? body : JSON.stringify(body) } : {}));
 
             const res = await fetch(`https://${shopOrigin}/admin/api/${SHOPIFY_API_VERSION}/${apiName}.json${queryString}`, options);
+            // console.log(`${shopOrigin} responded with (${res.status}) ${res.statusText} Body: ${options.body} Response: ${JSON.stringify(res)}`);
+            // console.log(`Response: ${await res.text()}`);
+
+            // Wait till we receive the entire response
+            const rawText = await res.text();
+            if (res.status === 200) {
+                // All good, reply with the data
+                return { data: rawText, err: null };
+            } else {
+                // Something went wrong in the request
+                throw new Error(`Server '${shopOrigin}' responded with status '${res.status}' and text: ${rawText}`);
+            }
+        } catch (e) {
+            console.error(`Error in '${method}' on shopify api '${apiName}'`, e);
+            // Propogate the error only, for specific handling
+            return { data: null, err: e };
+        }
+    },
+
+    fetchShopifyGraph: async (query, { shopOrigin, accessToken, ctx = null }) => {
+        const body = query;
+        // If provided the Next.js context, use that to pick up cookies
+        if (!!ctx) {
+            const cooks = parseCookies(ctx);
+            shopOrigin = cooks.shopOrigin;
+            accessToken = cooks.accessToken;
+        }
+
+        try {
+            // Setup common headers, and body
+            const options = Object.assign({
+                method,
+                headers: {
+                    'X-Shopify-Access-Token': accessToken,
+                    'Content-Type': 'application/graphql'
+                }
+            }, (body ? { body: typeof body === 'string' ? body : JSON.stringify(body) } : {}));
+
+            const res = await fetch(`https://${shopOrigin}/admin/api/${SHOPIFY_API_VERSION}/graphql.json`, options);
             // console.log(`${origin} responded with (${res.status}) ${res.statusText} Body: ${options.body} Response: ${JSON.stringify(res)}`);
             // console.log(`Response: ${await res.text()}`);
 

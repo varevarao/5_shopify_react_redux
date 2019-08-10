@@ -1,4 +1,4 @@
-import { API_TYPES, fetchShopifyAPI } from '../../helpers/shopify-fetch';
+import { API_TYPES, fetchInternalAPI } from '../../helpers/internal-fetch';
 import { orders as actionTypes } from './actionTypes';
 import { logError, ERROR_TYPES } from './errors';
 
@@ -7,9 +7,9 @@ export const orderListFetched = orders => ({
     payload: orders
 })
 
-export const setupInitialState = ctx => dispatch => {
+export const setupInitialState = () => dispatch => {
     // Fetch the orders list
-    return fetchShopifyAPI(API_TYPES.orders(), { ctx })
+    return fetchInternalAPI(API_TYPES.orders(), {})
         .then(({ data, err }) => {
             if (!!data) {
                 const { orders } = JSON.parse(data);
