@@ -16,3 +16,7 @@ export const showToaster = (message, error = false) => ({
 export const hideToaster = () => ({
     type: actionTypes.HIDE_TOASTER
 });
+
+export const initComplete = () => ({
+    type: actionTypes.INIT_COMPLETE
+});

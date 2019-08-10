@@ -3,7 +3,7 @@ import * as customers from './customers';
 import * as orders from './orders';
 import * as products from './products';
 import { fetchAppMeta } from './shop';
-import { showLoader, hideLoader } from './ui';
+import { showLoader, hideLoader, initComplete } from './ui';
 
 /**
  * Map of API's which support the initial state method
@@ -39,5 +39,6 @@ export default async function setupClientStores({ dispatch }) {
         }
     }
 
+    dispatch(initComplete());
     dispatch(hideLoader());
 }

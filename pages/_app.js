@@ -13,6 +13,7 @@ import { ThemeProvider } from 'styled-components';
 import initializeStore from '../store';
 import setupClientStores from '../store/actions';
 import { hideLoader, hideToaster, showLoader } from '../store/actions/ui';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 // API key is required by the app bridge
 const { publicRuntimeConfig: { ENV_DEV, API_KEY } } = getConfig();
@@ -32,8 +33,8 @@ const theme = {
 /**
  * HOC for wrapping the app with a toaster, and loader bar
  */
-const _PageWithLoader = ({ NextPage, loading, toaster, hideToaster, dispatch, ...props }) => {
-    if (process.browser) {
+const _PageWithLoader = ({ NextPage, loading, toaster, initState, hideToaster, dispatch, ...props }) => {
+    if (process.browser && initState === false) {
         // Setup the initial Redux stores on the client
         setupClientStores({ dispatch });
     }
@@ -41,16 +42,19 @@ const _PageWithLoader = ({ NextPage, loading, toaster, hideToaster, dispatch, ..
     return (
         <div>
             {loading && <Loading />}
+            {loading && <CircularProgress style={{ position: 'absolute', top: '50%', left: '50%' }} />}
+            {loading && <p style={{ position: 'absolute', top: '75%', left: '45%' }}>Setting up your app</p>}
             {toaster && <Toast error={toaster.error} content={toaster.message} onDismiss={hideToaster} />}
-            <NextPage {...props} />
+            {!loading && <NextPage {...props} />}
         </div>
     );
 };
 
 const mapStateToProps = state => {
     return {
-        loading: state.loader_visible,
-        toaster: state.toaster
+        loading: state.ui.loader_visible,
+        toaster: state.ui.toaster,
+        initState: state.ui.initialized
     }
 }
 

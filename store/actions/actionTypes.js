@@ -7,6 +7,8 @@ export const ui = {
     HIDE_LOADER: 'UI:HIDE_LOADER',
     SHOW_TOASTER: 'UI:SHOW_TOASTER',
     HIDE_TOASTER: 'UI:HIDE_TOASTER',
+    INIT_START: 'UI:INITIALIZING',
+    INIT_COMPLETE: 'UI:INITITALIZE_COMPLETE'
 };
 
 export const orders = {

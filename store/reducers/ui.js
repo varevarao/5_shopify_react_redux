@@ -2,7 +2,8 @@ import { ui as actionTypes } from '../actions/actionTypes';
 
 const initialState = {
     loader_visible: true,
-    toaster: null
+    toaster: null,
+    initialized: false
 };
 
 const uiReducer = (state = initialState, action) => {
@@ -26,6 +27,16 @@ const uiReducer = (state = initialState, action) => {
             return {
                 ...state,
                 toaster: null
+            }
+        case actionTypes.INIT_START:
+            return {
+                ...state,
+                initialized: 'started'
+            }
+        case actionTypes.INIT_COMPLETE:
+            return {
+                ...state,
+                initialized: true
             }
     }
 
