@@ -1,7 +1,7 @@
 import { fetchShopifyAPI } from '../../../helpers/shopify-fetch';
 
 const handlers = {
-    PUT: (req, res) => {
+    PUT: async (req, res) => {
         const {
             query: { id },
             body
